@@ -55,7 +55,7 @@ function initMap() {
         function getYelpData(marker) {
     		$.ajax({
     			method: "GET",
-    			headers: {"Authorization": "Bearer 4MH965vAT8BdYrnpJ9sfq7SaTeL3lwP-NURptuo5pHomWo2KvvdqX1ovRdNHpT8Ax-y0Bw9DtoyXcqoCalaXNHxLnSicA1GsTh3UQOuqXi2rlVwFOgyoV3qB_DylXHYx"},
+    			headers: {"Authorization": "Bearer "},
     			url: "https://api.yelp.com/v3/businesses/" + marker.yelp_id,
     			dataType: "json"
     			
