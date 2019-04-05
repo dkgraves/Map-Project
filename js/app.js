@@ -62,7 +62,7 @@ function initMap() {
     		});
         	
         	
-        	if (status == "200") {
+        	if (status == "200") {  
             
               infowindow.setContent('<div>' + marker.title + '</div><div id="yelp"></div>');
               
