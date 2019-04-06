@@ -11,5 +11,22 @@
  	width: 100%;
  }
  
- 
- 
+.row{
+	height: 100%;
+}
+
+.container-fluid{
+	height: 100%;
+}
+
+.leftPanel{
+	padding-top: 10%;
+	background-color: black;
+	padding-right: 0%;
+	padding-left: 0%;
+}
+
+#placeList{
+	padding-top: 10%;
+}
+

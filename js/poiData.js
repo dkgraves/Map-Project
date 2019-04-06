@@ -3,7 +3,7 @@ var locations = [
 	{
       name: 'Kroger',
       description: 'Large grocery store',
-      category: 'Coffee',
+      category: 'Grocery',
       location: {
         lat: 33.960472,
         lng: -84.143705
