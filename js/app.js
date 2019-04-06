@@ -7,7 +7,7 @@ function initMap() {
     // use a constructor to create a new map JS object.
     map = new google.maps.Map(document.getElementById('map'), {
  	  center: {lat: 33.963896, lng: -84.139585},
- 	  zoom: 17
+ 	  zoom: 2
  	 });
     
     var detailsInfowindow = new google.maps.InfoWindow();
@@ -55,27 +55,30 @@ function initMap() {
         function getYelpData(marker) {
     		$.ajax({
     			method: "GET",
-    			headers: {"Authorization": "Bearer "},
-    			url: "https://api.yelp.com/v3/businesses/" + marker.yelp_id,
-    			dataType: "json"
-    			
+    			headers: {"Accept":"*/*",
+    				"Authorization": "Bearer 4MH965vAT8BdYrnpJ9sfq7SaTeL3lwP-NURptuo5pHomWo2KvvdqX1ovRdNHpT8Ax-y0Bw9DtoyXcqoCalaXNHxLnSicA1GsTh3UQOuqXi2rlVwFOgyoV3qB_DylXHYx"},
+    			url: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + marker.yelp_id,
+    			dataType: "json",
+    			success: function(businessDataJson) {
+    				console.log(businessDataJson.rating);
+    			 	infowindow.setContent('<div>' + marker.title + '</div>'+
+    			 			'<div><img src=./img/small_' + businessDataJson.rating + '.png>&ensp;' + businessDataJson.review_count +' reviews</div>' +
+    			 			'<div>' + businessDataJson.categories[0].title + '</div>' +
+    			 			'<div>' + businessDataJson.location.display_address + '</div>' +
+    			 			'<div>' + businessDataJson.display_phone + '</div>' +
+    			 			'<a href=' + businessDataJson.url + ' target=_blank>' +
+    			 				'<img src=./img/Yelp_trademark_RGB_outline.png alt=Yelp Trademark style=height:64px>' +
+    			 			'</a>'	
+    			 			);	
+    			},
+    			error: function(e) {
+    				console.log("Response error " + e.message)
+    				infowindow.setContent('<div>' + marker.title + '</div>' +
+    	              '<div>No Yelp Data Found</div>');
+    			}	
     		});
-        	
-        	
-        	if (status == "200") {  
-            
-              infowindow.setContent('<div>' + marker.title + '</div><div id="yelp"></div>');
-              
-          
-            
-          } else {
-            infowindow.setContent('<div>' + marker.title + '</div>' +
-              '<div>No Yelp Data Found</div>');
-          }
         }
-        // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+        getYelpData(marker);
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
       }
@@ -96,7 +99,7 @@ function initMap() {
           markers[i].setMap(map);
           bounds.extend(markers[i].position);
         }
-        map.fitBounds(bounds);
+        map.fitBounds(bounds, {top:125, bottom:50});
       }
     showMarkers();
   }

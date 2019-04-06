@@ -16,3 +16,7 @@
    line-height: 30px;
    padding-left: 10px;
 }
+.rating4 {
+	dispay: block;
+	background:url('../img/small_4.png') no-repeat;
+}
