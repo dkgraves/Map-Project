@@ -19,15 +19,14 @@
 	    <a class="navbar-brand" href="#">Navbar</a>
 	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
 	      
-	        <form>
+	        
              <label>Filter list</label>
-             <select class="form-control-sm" id = "filterList">
+             <select class="form-control-sm" id = "filterList" data-bind="value: searchText">
                <option value = "ALL">ALL</option>
                <option value = "Grocery">Grocery</option>
                <option value = "Restaurant">Restaurant</option>
              </select>
-			</form>
-		</div>
+					</div>
 	  </nav>
 		
 	  <div id="map"></div>
@@ -37,7 +36,7 @@
     <script src="js/poiData.js"></script>
     <script src="js/app.js"></script>
     <script type='text/javascript' src="js/lib/knockout-3.5.0.js"></script>
-    <script	async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWoooPDPm4c0y1NZvhffqZ_yCuKHLSoZM&v=3&callback=initMap" >
+    <script	async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWoooPDPm4c0y1NZvhffqZ_yCuKHLSoZM&v=3&callback=buildMap" >
    	</script>
     </body>
 </html>

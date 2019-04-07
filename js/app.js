@@ -1,54 +1,25 @@
 // Create the map variable
 var map;
 //Create a blank array for all pre-defined location markers.
-var markers = [];
 
-function initMap() {
-    // use a constructor to create a new map JS object.
-    map = new google.maps.Map(document.getElementById('map'), {
- 	  center: {lat: 33.963896, lng: -84.139585},
- 	  mapTypeId: google.maps.MapTypeId.ROADMAP,
- 	  mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
- 	  zoom: 15
- 	 });
-    
-    var detailsInfowindow = new google.maps.InfoWindow();
-    // The following loop uses the location array to create an array of markers on initialize.
-    for (var i = 0; i < locations.length; i++) {
-      // Get the position from the location array stored in the poiData.js file.
-    	var name = locations[i].name;
-    	var position = locations[i].location;
-    	var label = locations[i].label;
-    	var yelp_id = locations[i].yelp_id
-		console.log(position)
-		console.log(name)
-		// Create a marker for each location, and put it into the markers array.
-		var marker = new google.maps.Marker({
-		    position: position,
-		    title: name,
-		    label: label,
-		    yelp_id: yelp_id,
-		    animation: google.maps.Animation.DROP,
-		    id: i
-		
-		});
-		// Push the marker to an array of markers.
-		markers.push(marker);
-		// Create an onclick event to open the details infowindow for each marker.
-        marker.addListener('click', function() {
-          populateInfoWindow(this, detailsInfowindow);
-        });	
-    }
+function ViewModel() {
 	
-    // This function populates the infowindow when the marker is clicked. Only one
+	var self = this;
+	// empty array for markers
+	this.markers = [];
+	// empty search for the list of markers
+	this.searchText  = ko.observable("");
+
+	 // This function populates the infowindow when the marker is clicked. Only one
     // infowindow can be open at a time. It is populate based
     // on the markers information in the poiData.js file.
-    function populateInfoWindow(marker, infowindow) {
+    this.populateInfoWindow = function(marker, infowindow) {
       // Check to make sure the infowindow is not already opened on this marker.
       if (infowindow.marker != marker) {
-    	  showMarkers()
-        // Add space in the infowindow content to allow the map to shift
-    	  // else the map will not shift enough when real content arrives.
+
+        // Add blank lines in the infowindow content to allow the map to shift if needed
+    	  // else the map will not shift enough when real content arrives and infowindow
+    	  // will be outside the viewing area.
         infowindow.setContent('<div>' + marker.title + '</div>' +
         					'<br><br><br><br><br>' 
         					); 
@@ -56,58 +27,119 @@ function initMap() {
         // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick', function() {
           infowindow.marker = null;
-          showMarkers()
+          
         });
-        // This function will use the marker data to retrieve Yelp data via a GET ajax call.
-        function getYelpData(marker) {
-    		$.ajax({
-    			method: "GET",
-    			headers: {"Accept":"*/*",
-    				"Authorization": "Bearer 4MH965vAT8BdYrnpJ9sfq7SaTeL3lwP-NURptuo5pHomWo2KvvdqX1ovRdNHpT8Ax-y0Bw9DtoyXcqoCalaXNHxLnSicA1GsTh3UQOuqXi2rlVwFOgyoV3qB_DylXHYx"},
-    			url: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + marker.yelp_id,
-    			dataType: "json",
-    			success: function(businessDataJson) {  // Display the Yelp information
-    				console.log(businessDataJson.rating);
-    			 	infowindow.setContent('<div>' + marker.title + '</div>'+
-    			 			'<div><img src=./img/small_' + businessDataJson.rating + '.png>&ensp;' + businessDataJson.review_count +' reviews</div>' +
-    			 			'<div>' + businessDataJson.categories[0].title + '</div>' +
-    			 			'<div>' + businessDataJson.location.display_address + '</div>' +
-    			 			'<div>' + businessDataJson.display_phone + '</div>' +
-    			 			'<a href=' + businessDataJson.url + ' target=_blank>' +
-    			 				'<img src=./img/Yelp_trademark_RGB_outline.png alt=Yelp Trademark style=height:54px>' +
-    			 			'</a>'	
-    			 			);	
-    			},
-    			error: function(e) {
-    				console.log("Response error " + e.message)
-    				infowindow.setContent('<div>' + marker.title + '</div>' +
-    	              '<div>No Yelp Data Found</div>');
-    			}	
-    		});
-        }
-        // Call the function to get and display the Yelp information in an infowindow
-        getYelpData(marker);
+        // This will use the marker data to retrieve Yelp data via a GET ajax call.
+         
+		$.ajax({
+			method: "GET",
+			headers: {"Accept":"*/*",
+				"Authorization": "Bearer 4MH965vAT8BdYrnpJ9sfq7SaTeL3lwP-NURptuo5pHomWo2KvvdqX1ovRdNHpT8Ax-y0Bw9DtoyXcqoCalaXNHxLnSicA1GsTh3UQOuqXi2rlVwFOgyoV3qB_DylXHYx"},
+			url: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + marker.yelp_id,
+			dataType: "json",
+			success: function(businessDataJson) {  // Display the Yelp information
+				console.log(businessDataJson.rating);
+			 	infowindow.setContent('<div>' + marker.title + '</div>'+
+			 			'<div><img src=./img/small_' + businessDataJson.rating + '.png>&ensp;' + businessDataJson.review_count +' reviews</div>' +
+			 			'<div>' + businessDataJson.categories[0].title + '</div>' +
+			 			'<div>' + businessDataJson.location.display_address + '</div>' +
+			 			'<div>' + businessDataJson.display_phone + '</div>' +
+			 			'<a href=' + businessDataJson.url + ' target=_blank>' +
+			 				'<img src=./img/Yelp_trademark_RGB_outline.png alt=Yelp Trademark style=height:54px>' +
+			 			'</a>'	
+			 			);	
+			},
+			error: function(e) {
+				console.log("Response error " + e.message)
+				infowindow.setContent('<div>' + marker.title + '</div>' +
+	              '<div>No Yelp Data Found</div>');
+			}	
+		});
+        
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
       }
-    }
+    };
 
+	
+    this.initMap = function() {
+    // use a constructor to create a new map JS object.
+    	map = new google.maps.Map(document.getElementById('map'), {
+			center: {lat: 33.963896, lng: -84.139585},
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+			zoom: 15
+    	});
+    	
+    	var bounds = new google.maps.LatLngBounds();
+    	
+	    this.detailsInfowindow = new google.maps.InfoWindow();
+    // The following loop uses the location array to create an array of markers on initialize.
+	    for (var i = 0; i < locations.length; i++) {
+	    	// Get the position from the location array stored in the poiData.js file.
+	    	var name = locations[i].name;
+	    	var category = locations[i].category;
+	    	var position = locations[i].location;
+	    	var yelp_id = locations[i].yelp_id
+			console.log(position)
+			console.log(name)
+			// Create a marker for each location, and put it into the markers array.
+			var marker = new google.maps.Marker({
+				map: map,
+			    position: position,
+			    category: category,
+			    title: name,
+			    yelp_id: yelp_id,
+			    animation: google.maps.Animation.DROP,
+			    id: i
+				});
+		// Push the marker to an array of markers.
+		this.markers.push(marker);
+		// Create an onclick event to open the details infowindow for each marker.
+        marker.addListener('click', function() {
+          self.populateInfoWindow(this, self.detailsInfowindow);
+          this.setAnimation(google.maps.Animation.BOUNCE);
+          // stop bouncing after xxxx milliseconds
+          setTimeout((function() {this.setAnimation(null);}).bind(this), 1500); 
+        });
+        bounds.extend(this.markers[i].position);
+	    }
+		// Make the markers fit inside the map by extending the boundaries
+	    map.fitBounds(bounds); 
+	    
+    };  
     
- // This function will loop through the markers array and hide them all.
-    function hideMarkers() {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-      }
-    }
-	// This function will loop through the markers array and display them all.  
-    function showMarkers() {
-        var bounds = new google.maps.LatLngBounds();
-        // Extend the boundaries of the map for each marker and display the marker
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
-          bounds.extend(markers[i].position);
-        }
-        map.fitBounds(bounds);
-      }
-    showMarkers();
-  }
+    // This function is used in the index.html page to launch the infowindow
+    // when a link in the list of locations is selected.
+    this.listLocationClicked = function(){
+        self.populateInfoWindow(this,self.detailsInfowindow); 
+        this.setAnimation(google.maps.Animation.BOUNCE);
+		// stop bouncing after xxxx milliseconds
+            setTimeout((function() {this.setAnimation(null);}).bind(this), 1500); 
+
+    };
+    
+    this.initMap();
+    
+    this.detailsInfowindow.close();
+    
+    // This function will use the filter value on the index.html page to
+    // select the correct markers to display.
+    this.listLocations = ko.computed(function() {
+        var result = [];
+        for (var i = 0; i < this.markers.length; i++) 
+            if ((this.markers[i].category.toUpperCase().includes(this.searchText().toUpperCase())) || (this.searchText() == "ALL")){
+            	console.log(this.markers[i]);
+                result.push(this.markers[i]);
+                this.markers[i].setVisible(true);   
+            }
+            else
+                this.markers[i].setVisible(false);
+            return result;
+        }, this);
+}
+// This is the callback function to load the maps after Google responds to the request.
+function buildMap() {
+    ko.applyBindings(new ViewModel()); // call the viewModel and apply bindings
+}    
+    
