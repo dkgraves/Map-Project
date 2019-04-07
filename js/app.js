@@ -17,11 +17,12 @@ function ViewModel() {
       // Check to make sure the infowindow is not already opened on this marker.
       if (infowindow.marker != marker) {
 
-        // Add blank lines in the infowindow content to allow the map to shift if needed
+        // Add blank lines height and width in the infowindow content to allow the map to shift if needed
     	  // else the map will not shift enough when real content arrives and infowindow
     	  // will be outside the viewing area.
         infowindow.setContent('<div>' + marker.title + '</div>' +
-        					'<br><br><br><br><br>' 
+        					'<br><pre>                                    </pre>' +
+        					'<br><br><br><br>' 
         					); 
         infowindow.marker = marker;
         // Make sure the marker property is cleared if the infowindow is closed.
@@ -38,8 +39,13 @@ function ViewModel() {
 			url: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + marker.yelp_id,
 			dataType: "json",
 			success: function(businessDataJson) {  // Display the Yelp information
+				if(businessDataJson.hours.is_open_now) {
+					var openClosed = 'Closed'
+				} else
+					var openClosed = 'Open'
+				
 				console.log(businessDataJson.rating);
-			 	infowindow.setContent('<div>' + marker.title + '</div>'+
+			 	infowindow.setContent('<div>' + marker.title + '&nbsp;--->&nbsp;' + openClosed + '&nbsp; Now</div>'+
 			 			'<div><img src=./img/small_' + businessDataJson.rating + '.png>&ensp;' + businessDataJson.review_count +' reviews</div>' +
 			 			'<div>' + businessDataJson.categories[0].title + '</div>' +
 			 			'<div>' + businessDataJson.location.display_address + '</div>' +
@@ -111,12 +117,12 @@ function ViewModel() {
     
     // This function is used in the index.html page to launch the infowindow
     // when a link in the list of locations is selected.
-    this.listLocationClicked = function(){
+    this.listLocationSelect = function(){
         self.populateInfoWindow(this,self.detailsInfowindow); 
         this.setAnimation(google.maps.Animation.BOUNCE);
 		// stop bouncing after xxxx milliseconds
             setTimeout((function() {this.setAnimation(null);}).bind(this), 1500); 
-
+               	
     };
     
     this.initMap();
@@ -141,7 +147,7 @@ function ViewModel() {
         	return result;
         }, this);
 }
-// This is the callback function to load the maps after Google responds to the request.
+// This is the callback function to load the maps after Google responds to the request and set up knockout bindings.
 function buildMap() {
     ko.applyBindings(new ViewModel()); // call the viewModel and apply bindings
 }    

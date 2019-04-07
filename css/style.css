@@ -3,7 +3,7 @@
  	width: 100%;
  	margin: 0;
  	padding: 0;
- 	background-color: black;
+ 	overflow-y:hidden;
  }
 
  #map {
@@ -11,22 +11,15 @@
  	width: 100%;
  }
  
-.row{
-	height: 100%;
+.custom-toggler.navbar-toggler {
+    border-color: rgb(0,0,0);
+    font-size: 0.5em;
+}
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,0,0, 1.0)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
 
-.container-fluid{
-	height: 100%;
+.markerLink{
+	color: black;
+	
 }
-
-.leftPanel{
-	padding-top: 10%;
-	background-color: black;
-	padding-right: 0%;
-	padding-left: 0%;
-}
-
-#placeList{
-	padding-top: 10%;
-}
-
