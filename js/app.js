@@ -126,16 +126,19 @@ function ViewModel() {
     // This function will use the filter value on the index.html page to
     // select the correct markers to display.
     this.listLocations = ko.computed(function() {
-        var result = [];
+    	var bounds = new google.maps.LatLngBounds();;
+    	this.detailsInfowindow.close();
+    	var result = [];
         for (var i = 0; i < this.markers.length; i++) 
             if ((this.markers[i].category.toUpperCase().includes(this.searchText().toUpperCase())) || (this.searchText() == "ALL")){
-            	console.log(this.markers[i]);
                 result.push(this.markers[i]);
-                this.markers[i].setVisible(true);   
+                this.markers[i].setVisible(true);
+                bounds.extend(this.markers[i].position);
             }
             else
                 this.markers[i].setVisible(false);
-            return result;
+        	map.fitBounds(bounds);
+        	return result;
         }, this);
 }
 // This is the callback function to load the maps after Google responds to the request.
