@@ -59,7 +59,7 @@ function ViewModel() {
 			error: function(e) {
 				console.log("Response error " + e.message)
 				infowindow.setContent('<div>' + marker.title + '</div>' +
-	              '<div>No Yelp Data Found</div>');
+	              '<div>Error encountered retrieving Yelp information</div>');
 			}
 		});
 
@@ -152,3 +152,8 @@ function ViewModel() {
 function buildMap() {
     ko.applyBindings(new ViewModel()); // call the viewModel and apply bindings
 }
+
+function googleError() {
+	alert("Error loading Google Maps, unable to load the map");
+}
+	
